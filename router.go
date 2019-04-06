@@ -11,6 +11,10 @@ func (s *Service) SetRouter(){
 		c.JSON(s.checkAdmin(c))
 	})
 
+	r.GET("/admin/logout", func(c *gin.Context){
+		c.JSON(s.adminLogout(c))
+	})
+
 	s.Router = r
 
 }

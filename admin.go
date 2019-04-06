@@ -24,7 +24,7 @@ func (s *Service) checkAdmin(c *gin.Context) (int, interface{}){
 	}
 
 	sqlStr := "SELECT * FROM `User` WHERE `UserName` = ? LIMIT 1"
-	rows , err := s.DB.Query(sqlStr, u.UserName)
+	rows, err := s.DB.Query(sqlStr, u.UserName)
 
 	if err != nil{
 		panic(err)
@@ -48,7 +48,7 @@ func (s *Service) checkAdmin(c *gin.Context) (int, interface{}){
 	}
 
 	if len(arr) >= 1 {
-		if u.Password == arr[0].Password{
+		if u.Password == arr[0].Password && arr[0].Auth == "admin"{
 			token := s.generateToken(arr[0].ID)
 
 			return s.successMsg(200, "登录成功", map[string]interface{}{"token": token})
@@ -63,6 +63,36 @@ func (s *Service) checkAdmin(c *gin.Context) (int, interface{}){
 	}
 
 }
+
+// 管理员登出
+func (s *Service) adminLogout(c *gin.Context) (int, interface{}){
+	token := c.GetHeader("Token")
+	if token == ""{
+		return s.errorMsg(502, "入参错误", http.StatusBadGateway)
+	}
+
+	rows, err := s.DB.Query("SELECT `Token` FROM `User` WHERE `Token` = ? AND Auth = 'admin'", token)
+
+	if err != nil{
+		panic(err)
+	}
+
+	defer rows.Close()
+
+	if rows.Next(){
+		// 含有记录
+		_, err := s.DB.Exec("UPDATE `User` SET `Token` = '' WHERE `Token` = ?", token)
+
+		if err == nil {
+			return s.successMsg(200, "注销成功", "")
+		}
+
+		return s.errorMsg(403, "禁止访问", http.StatusForbidden)
+	}else{
+		return s.errorMsg(403, "禁止访问", http.StatusForbidden)
+	}
+}
+
 
 // 生成 Token
 func (s *Service) generateToken(ID int)(token string){
