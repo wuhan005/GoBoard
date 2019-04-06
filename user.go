@@ -26,7 +26,7 @@ func (s *Service)register(c *gin.Context)(int, interface{}){
 		return s.errorMsg(500, "数据库错误", http.StatusBadGateway)
 	}
 
-	for rows.Next(){
+	if rows.Next(){
 		return s.errorMsg(403, "用户名重复，换一个吧~", http.StatusBadGateway)
 	}
 
