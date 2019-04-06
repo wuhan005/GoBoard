@@ -38,7 +38,7 @@ func (s *Service) checkAdmin(c *gin.Context) (int, interface{}){
 	for rows.Next() {
 		userInfo := new(UserInfo)
 
-		err = rows.Scan(&userInfo.ID, &userInfo.UserName, &userInfo.Password, &userInfo.Auth, &userInfo.Token)
+		err = rows.Scan(&userInfo.ID, &userInfo.UserName, &userInfo.Password, &userInfo.Mail, &userInfo.Auth, &userInfo.Token)
 
 		if err != nil {
 			panic(err)

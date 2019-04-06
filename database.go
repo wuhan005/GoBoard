@@ -10,6 +10,7 @@ type UserInfo struct {
 	ID	 		int
 	UserName 	string
 	Password  	string
+	Mail        string
 	Auth		string
 	Token     	string
 }
