@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"math/rand"
 	"net/http"
+	"time"
 )
 
 // 管理员登录
@@ -46,8 +49,9 @@ func (s *Service) checkAdmin(c *gin.Context) (int, interface{}){
 
 	if len(arr) >= 1 {
 		if u.Password == arr[0].Password{
-			return s.successMsg(200, "登录成功", "")
+			token := s.generateToken(arr[0].ID)
 
+			return s.successMsg(200, "登录成功", map[string]interface{}{"token": token})
 		}else{
 			// 密码错误
 			return s.errorMsg(403, "用户名或密码错误", http.StatusForbidden)
@@ -56,6 +60,20 @@ func (s *Service) checkAdmin(c *gin.Context) (int, interface{}){
 	}else{
 		// 用户名错误
 		return s.errorMsg(403, "用户名或密码错误", http.StatusForbidden)
+	}
+
+}
+
+// 生成 Token
+func (s *Service) generateToken(ID int)(token string){
+	randomToken := md5Encode(fmt.Sprint(rand.Intn(int(time.Now().UnixNano()))))
+
+	_, err := s.DB.Exec("UPDATE `User` SET `Token` = ? WHERE `ID` = ?", randomToken, ID)
+
+	if err == nil {
+		return randomToken
+	}else{
+		return ""
 	}
 
 }
