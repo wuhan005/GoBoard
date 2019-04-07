@@ -12,6 +12,10 @@ func (s *Service) SetRouter(){
 		c.JSON(s.register(c))
 	})
 
+	r.POST("/user/login", func(c *gin.Context){
+		c.JSON(s.userLogin(c))
+	})
+
 	// 管理员
 	r.POST("/admin/login", func(c *gin.Context){
 		c.JSON(s.checkAdmin(c))

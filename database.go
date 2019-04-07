@@ -13,6 +13,7 @@ type UserInfo struct {
 	Mail        string
 	Auth		string
 	Token     	string
+	Avatar		string
 }
 
 func (s *Service) InitDB(){

@@ -1,11 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"math/rand"
 	"net/http"
-	"time"
 )
 
 // 管理员登录
@@ -91,19 +88,4 @@ func (s *Service) adminLogout(c *gin.Context) (int, interface{}){
 	}else{
 		return s.errorMsg(403, "禁止访问", http.StatusForbidden)
 	}
-}
-
-
-// 生成 Token
-func (s *Service) generateToken(ID int)(token string){
-	randomToken := md5Encode(fmt.Sprint(rand.Intn(int(time.Now().UnixNano()))))
-
-	_, err := s.DB.Exec("UPDATE `User` SET `Token` = ? WHERE `ID` = ?", randomToken, ID)
-
-	if err == nil {
-		return randomToken
-	}else{
-		return ""
-	}
-
 }
