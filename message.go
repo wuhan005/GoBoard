@@ -24,7 +24,7 @@ func (s *Service) newMessage(c *gin.Context)(int, interface{}){
 	message := new(input)
 
 	token := c.GetHeader("Token")
-	userID := s.checkUserToken(token)
+	userID, _ := s.checkUserToken(token)
 
 	err := c.ShouldBindJSON(message)
 
@@ -71,4 +71,21 @@ func (s *Service) listMessage(c *gin.Context)(int, interface{}){
 	}
 
 	return s.successMsg(200, "成功", messageArray)
+}
+
+func (s *Service) deleteMessage(c *gin.Context)(int, interface{}){
+	token, auth := s.checkUserToken(c.GetHeader("Token"))
+	if token == -1 || auth != "admin"{
+		return s.errorMsg(403, "禁止访问", http.StatusForbidden)
+	}
+
+
+	_, err := s.DB.Exec("DELETE FROM `Message` WHERE `Message`.`ID` = ?", c.Param("id"))
+
+	if err != nil{
+		return s.errorMsg(500, "数据库错误", http.StatusBadGateway)
+	}
+
+	return s.successMsg(200, "删除成功", "")
+
 }

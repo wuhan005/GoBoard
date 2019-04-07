@@ -116,9 +116,9 @@ func (s *Service) generateToken(ID int)(token string){
 
 
 // 检查 Token
-func (s *Service) checkUserToken(token string)(userID int){
+func (s *Service) checkUserToken(token string)(userID int, Auth string){
 	if token == ""{
-		return -1
+		return -1, "user"
 	}
 
 	rows, err := s.DB.Query("SELECT * FROM `User` WHERE `Token` = ?", token)
@@ -126,7 +126,7 @@ func (s *Service) checkUserToken(token string)(userID int){
 	defer rows.Close()
 
 	if err != nil{
-		return -1
+		return -1, "user"
 	}
 
 	var userInfo = new(UserInfo)
@@ -135,11 +135,11 @@ func (s *Service) checkUserToken(token string)(userID int){
 		err = rows.Scan(&userInfo.ID, &userInfo.UserName, &userInfo.Password, &userInfo.Mail, &userInfo.Auth, &userInfo.Token)
 
 		if err != nil{
-			return -1
+			return -1, "user"
 		}
 	}else{
-		return -1
+		return -1, "user"
 	}
 
-	return userInfo.ID
+	return userInfo.ID, userInfo.Auth
 }

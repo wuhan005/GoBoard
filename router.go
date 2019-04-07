@@ -16,6 +16,10 @@ func (s *Service) SetRouter(){
 		c.JSON(s.listMessage(c))
 	})
 
+	r.DELETE("/message/:id", func(c *gin.Context){
+		c.JSON(s.deleteMessage(c))
+	})
+
 	// 用户
 	r.POST("/user/register", func(c *gin.Context){
 		c.JSON(s.register(c))
