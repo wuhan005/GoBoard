@@ -110,7 +110,15 @@ func (s *Service) checkUserToken(token string)(userID int){
 		return -1
 	}
 
-	if rows.Next(){
+	var userInfo = new(UserInfo)
 
+	if rows.Next(){
+		err = rows.Scan(&userInfo.ID, &userInfo.UserName, &userInfo.Password, &userInfo.Mail, &userInfo.Auth, &userInfo.Token)
+
+		if err != nil{
+			return -1
+		}
 	}
+
+	return userInfo.ID
 }
