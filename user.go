@@ -137,6 +137,8 @@ func (s *Service) checkUserToken(token string)(userID int){
 		if err != nil{
 			return -1
 		}
+	}else{
+		return -1
 	}
 
 	return userInfo.ID
