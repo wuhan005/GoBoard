@@ -7,6 +7,11 @@ import (
 func (s *Service) SetRouter(){
 	r := gin.Default()
 
+	// 留言
+	r.POST("/message", func(c *gin.Context){
+		c.JSON(s.newMessage(c))
+	})
+
 	// 用户
 	r.POST("/user/register", func(c *gin.Context){
 		c.JSON(s.register(c))

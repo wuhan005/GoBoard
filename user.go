@@ -16,14 +16,20 @@ func (s *Service)register(c *gin.Context)(int, interface{}){
 	}
 
 	var input = new(registerForm)
-	err := c.ShouldBindJSON(&input)
+	err := c.ShouldBind(&input)
 
 	if err != nil {
 		return s.errorMsg(403, "入参错误", http.StatusForbidden)
 	}
 
+	if input.UserName == "" || input.Password == "" || input.Mail == ""{
+		return s.errorMsg(403, "入参错误", http.StatusForbidden)
+	}
+
 	// 判断用户名是否重复
 	rows, err := s.DB.Query("SELECT * FROM `User` WHERE `UserName` = ?", input.UserName)
+
+	defer rows.Close()
 
 	if err != nil{
 		return s.errorMsg(500, "数据库错误", http.StatusBadGateway)
@@ -59,7 +65,13 @@ func (s *Service)userLogin (c *gin.Context)(int, interface{}){
 		return s.errorMsg(403, "入参错误", http.StatusForbidden)
 	}
 
+	if input.UserName == "" || input.Password == "" {
+		return s.errorMsg(403, "入参错误", http.StatusForbidden)
+	}
+
 	rows, err := s.DB.Query("SELECT * FROM `User` WHERE `UserName` = ? AND `Password` = ?", input.UserName, input.Password)
+
+	defer rows.Close()
 
 	if err != nil{
 		return s.errorMsg(500, "数据库错误", http.StatusBadGateway)
@@ -105,7 +117,14 @@ func (s *Service) generateToken(ID int)(token string){
 
 // 检查 Token
 func (s *Service) checkUserToken(token string)(userID int){
+	if token == ""{
+		return -1
+	}
+
 	rows, err := s.DB.Query("SELECT * FROM `User` WHERE `Token` = ?", token)
+
+	defer rows.Close()
+
 	if err != nil{
 		return -1
 	}
