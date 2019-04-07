@@ -11,6 +11,10 @@ func (s *Service) SetRouter(){
 	r.POST("/message", func(c *gin.Context){
 		c.JSON(s.newMessage(c))
 	})
+	
+	r.GET("/messages", func(c *gin.Context) {
+		c.JSON(s.listMessage(c))
+	})
 
 	// 用户
 	r.POST("/user/register", func(c *gin.Context){

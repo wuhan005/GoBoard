@@ -6,6 +6,16 @@ import (
 	"time"
 )
 
+type Message struct{
+	ID			int
+	Content 	string
+	Create_Date int
+	UserID 		int
+	UserName   	string
+	Mail        string
+	Avatar 		string
+}
+
 func (s *Service) newMessage(c *gin.Context)(int, interface{}){
 	type input struct{
 		Content string
@@ -35,4 +45,30 @@ func (s *Service) newMessage(c *gin.Context)(int, interface{}){
 	}
 
 	return s.successMsg(200, "留言成功", "")
+}
+
+func (s *Service) listMessage(c *gin.Context)(int, interface{}){
+	rows, err := s.DB.Query("SELECT `Message`.*, `User`.`Mail`, `User`.`UserName` FROM `Message` INNER JOIN `User` WHERE `Message`.`UserID` = `User`.`ID`")
+	if err != nil{
+		return s.errorMsg(500, "数据库错误", http.StatusBadGateway)
+	}
+
+	defer rows.Close()
+
+	messageArray := make([] *Message, 0, 100)
+
+	for rows.Next() {
+		data := new(Message)
+
+		err = rows.Scan(&data.ID, &data.Content, &data.Create_Date, &data.UserID, &data.Mail, &data.UserName)
+
+		if err != nil {
+			panic(err)
+		} else {
+			data.Avatar = "https://cdn.v2ex.com/gravatar/" + md5Encode(data.Mail) + ".png"
+			messageArray = append(messageArray, data)
+		}
+	}
+
+	return s.successMsg(200, "成功", messageArray)
 }
