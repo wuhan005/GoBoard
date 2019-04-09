@@ -6,6 +6,23 @@ workspace:
   path: app
 
 steps:
+  - name: check-config
+    environment:
+      ALIYUN_USERNAME:
+        from_secret: aliyun-username
+      ALIYUN_PASSWORD:
+        from_secret: aliyun-password
+      ALIYUN_REGISTRY:
+        from_secret: aliyun-registry
+      ALIYUN_REPO:
+        from_secret: aliyun-repo
+        
+    commands:
+      - echo $ALIYUN_USERNAME
+      - echo $ALIYUN_PASSWORD
+      - echo $ALIYUN_REGISTRY
+      - echo $ALIYUN_REPO
+
   - name: docker-push
     image: plugins/docker
     environment:

@@ -12,7 +12,7 @@ RUN go mod download \
 
 
 FROM alpine:latest as prod
-COPY --from=go-builder /app/GoBoard /GoBoard
+COPY --from=go-builder /app/GoBoard /app/GoBoard
 
 WORKDIR /app
 
