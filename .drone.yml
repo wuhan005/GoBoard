@@ -7,6 +7,7 @@ workspace:
 
 steps:
   - name: check-config
+    image: alpine:latest
     environment:
       ALIYUN_USERNAME:
         from_secret: aliyun-username
@@ -16,7 +17,7 @@ steps:
         from_secret: aliyun-registry
       ALIYUN_REPO:
         from_secret: aliyun-repo
-        
+
     commands:
       - echo $ALIYUN_USERNAME
       - echo $ALIYUN_PASSWORD
